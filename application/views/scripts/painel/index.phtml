@@ -1,0 +1,76 @@
+<?php
+echo $this->headScript();
+
+//Zend_Debug::dump($this->painel);
+?>
+<p style="text-align: right;position: relative;margin-top: 10px;margin-right: 10px;">
+    <a href="<?php echo $this->url(array('controller' => 'auth', 'action' => 'logout'), null, true); ?>">
+        <button type="button" class="btn btn-default btn-lg">Sair</button>
+    </a>
+</p>
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    </head>
+    <body>
+
+        <div class="container">
+            <h2>Usuários</h2>
+            <table class="table table-bordered" style="font-size: 11px;">
+                <thead>
+                    <tr>
+                        <th>Nome:</th>
+                        <th>CPF:</th>
+                        <th>Login</th>
+                        <th>Data de Nascimento</th>
+                        <th>Enderço</th>
+                        <th>Data de Adimissao</th>
+                        <th>Período de Experiência Início</th>
+                        <th>Período de Experiência Fim</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
+                    $locale = new Zend_Locale('de_AT');
+                    foreach ($this->painel as $value) {
+                        $dataNascimento = new Zend_Date($value['data_nascimento'], false, $locale);
+                        $dataAdm = new Zend_Date($value['data_admissao'], false, $locale);
+                        $dataExpIni = new Zend_Date($value['data_exp_inicio'], false, $locale);
+                        $dataExpFim = new Zend_Date($value['data_exp_fim'], false, $locale);
+                        ?>
+                        <tr>
+                            <td><?php echo $value['nome_completo'] ?></td>
+                            <td><?php echo $value['cpf'] ?></td>
+                            <td><?php echo $value['login'] ?></td>
+                            <td><?php echo $dataNascimento->toString("dd/MM/YYYY") ?></td>
+                            <td><?php echo $value['endereco'] ?></td>
+                            <td><?php echo $dataAdm->toString("dd/MM/YYYY") ?></td>
+                            <td><?php echo $dataExpIni->toString("dd/MM/YYYY") ?></td>
+                            <td><?php echo $dataExpFim->toString("dd/MM/YYYY") ?></td>
+                            <td>
+                                <a href="http://localhost/rkr/public/painel/edit/id/<?php echo $value['id'] ?>"><button type="button" class="btn btn-success">Editar</button></a>
+                                <a href="http://localhost/rkr/public/painel/delete/id/<?php echo $value['id'] ?>"><button type="button" class="btn btn-danger">Excluir</button></a></td>
+                        </tr>
+                    <?php } ?>   
+                </tbody>
+            </table>
+        </div>
+
+    </body>
+</html>
+<p style="text-align: center;">
+    <a href="<?php echo $this->url(array('controller' => 'painel', 'action' => 'new'), null, true); ?>">
+        <button type="button" class="btn btn-success">Novo Cadastro</button>
+    </a>
+</p>
+<footer>
+    <div style="    margin-left: 100px;">
+        <h6>Usuário logado: <?php echo $this->usuario->nome_completo; ?></h6>
+    </div>
+</footer>

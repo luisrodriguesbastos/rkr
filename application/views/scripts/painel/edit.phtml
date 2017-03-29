@@ -1,0 +1,132 @@
+<?php
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+$usuario = $this->painel[0];
+echo $this->headScript();
+
+$locale = new Zend_Locale('de_AT');
+$dataNascimento = new Zend_Date($usuario['data_nascimento'], false, $locale);
+$dataAdm = new Zend_Date($usuario['data_admissao'], false, $locale);
+$dataExpIni = new Zend_Date($usuario['data_exp_inicio'], false, $locale);
+$dataExpFim = new Zend_Date($usuario['data_exp_fim'], false, $locale);
+
+//Zend_Debug::dump($this->painel);
+?>
+
+<p style="text-align: right;position: relative;margin-top: 10px;margin-right: 10px;">
+    <a href="<?php echo $this->url(array('controller' => 'auth', 'action' => 'logout'), null, true); ?>">
+        <button type="button" class="btn btn-default btn-lg">Sair</button>
+    </a>
+</p>
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+        <link rel="stylesheet" type="css/text" href="test.css"/>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+        <script src="http://code.jquery.com/ui/1.9.2/jquery-ui.js"></script>
+        <meta charset="UTF-8">
+    </head>
+    <body>
+
+        <div class="container">
+            <form action="http://localhost/rkr/public/painel/post" method="POST" name="form1" id="form1">
+                <input type="hidden" name="id" id="id" value="<?php echo $usuario['id'] ?>">
+                <div class="form-group">
+                    <label for="name">Nome</label>
+                    <input class="form-control" placeholder="Nome completo" maxlength="14" type="text" name="nome_completo" id="nome_completo" value="<?php echo $usuario['nome_completo'] ?>">
+                </div>
+                <div class="form-group">
+                    <label for="cpf">CPF</label>
+                    <input class="form-control" placeholder="000.000.000-00" maxlength="14" type="text" name="cpf" id="cpf" value="<?php echo $usuario['cpf'] ?>" onKeyPress="MascaraCPF(form1.cpf);">
+                </div>
+                <div class="form-group">
+                    <label for="exampleInputPassword1">Senha</label>
+                    <input type="password" class="form-control" id="senha" name="senha" value="<?php echo $usuario['senha'] ?>" placeholder="Password">
+                </div>
+                <div class="form-group">
+                    <label for="exampleInputPassword1">Login</label>
+                    <input type="text" class="form-control" id="login" name="login" placeholder="Login" value="<?php echo $usuario['login'] ?>">
+                </div>
+                <div class="form-group">
+                    <label for="exampleInputPassword1">Data de nascimento</label>
+                    <input type="text" class="form-control" id="data_nascimento" name="data_nascimento" placeholder="00/00/0000" value="<?php echo $dataNascimento->toString("dd/MM/YYYY") ?>">
+                </div>
+                <div class="form-group">
+                    <label for="exampleInputPassword1">Endereço</label>
+                    <input type="text" class="form-control" id="endereco" name="endereco" placeholder="Rua, bairro, número, cidade" value="<?php echo $usuario['endereco'] ?>">
+                </div>
+                <div class="form-group">
+                    <label for="exampleInputPassword1">Data de adimissão</label>
+                    <input type="text" class="form-control" id="data_admissao" name="data_admissao" placeholder="00/00/0000" value="<?php echo $dataAdm->toString("dd/MM/YYYY") ?>">
+                </div>
+                <div class="form-group">
+                    <label for="exampleInputPassword1">Período de experiência inicio</label>
+                    <input type="text" class="form-control" id="data_exp_inicio" name="data_exp_inicio" placeholder="00/00/0000" value="<?php echo $dataExpIni->toString("dd/MM/YYYY") ?>">
+                </div>
+                <div class="form-group">
+                    <label for="exampleInputPassword1">Período de experiência fim</label>
+                    <input type="text" class="form-control" id="data_exp_fim" name="data_exp_fim" placeholder="00/00/0000" value="<?php echo $dataExpFim->toString("dd/MM/YYYY") ?>">
+                </div>
+                <div class="form-group">
+                    <label for="exampleInputFile">Entrada de arquivo</label>
+                    <input type="file" id="foto" name="foto">
+                </div>
+                <button type="button" id="btn-enviar" class="btn btn-default">Enviar</button>
+            </form>
+        </div>
+
+    </body>
+</html>
+
+<p style="text-align: left;position: relative;margin-top: 10px;margin-left: 15px;">
+    <a href="<?php echo $this->url(array('controller' => 'painel', 'action' => 'index'), null, true); ?>">
+        <button type="button" class="btn btn-default btn-lg">Voltar</button>
+    </a>
+</p>
+
+<script>
+    jQuery("#btn-enviar").click(function () {
+        var ret = validaDados();
+        if (ret == '') {
+            jQuery("#form1").submit();
+        } else {
+            alert(ret);
+        }
+    });
+
+    function validaDados() {
+        var nome = jQuery("#nome_completo").val();
+        var cpf = jQuery("#cpf").val();
+        var ret = '';
+        if (nome == '') {
+            ret = 'Preencha o campo nome \n';
+        }
+        if (jQuery("#termo").prop("checked") == false) {
+            ret += 'Aceite o termo para prosseguir \n';
+        }
+        if (validaCPF(String(cpf)) == false) {
+            ret += 'CPF inválido \n';
+        }
+        if (jQuery("#data_nascimento").val() == '') {
+            ret += 'Preencha a data de nascimento \n';
+        }
+        if (jQuery("#data_admissao").val() == '') {
+            ret += 'Preencha a data de Admissao \n';
+        }
+        if (jQuery("#data_exp_inicio").val() == '') {
+            ret += 'Preencha a data de experiência \n';
+        }
+        if (jQuery("#data_exp_fim").val() == '') {
+            ret += 'Preencha a data de experiência \n';
+        }
+        return ret;
+    }
+</script>
